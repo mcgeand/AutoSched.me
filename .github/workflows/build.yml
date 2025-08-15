@@ -1,0 +1,16 @@
+name: Build
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/build.yml'
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Build workflow placeholder"
+
