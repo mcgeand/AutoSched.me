@@ -1,0 +1,46 @@
+name: Linear PR Review Sync
+
+on:
+  pull_request:
+    types: [ready_for_review]
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  to-in-review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Linear issue key
+        id: extract
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            TEXT="${{ github.event.pull_request.title }}
+${{ github.event.pull_request.body }}"
+          else
+            # pull_request_review
+            TEXT="${{ github.event.pull_request.title }}
+${{ github.event.pull_request.body }}"
+          fi
+          echo "$TEXT" | grep -Eo '(AS|AUT)-[0-9]+' | head -n1 > key.txt || true
+          if [ -s key.txt ]; then echo "key=$(cat key.txt)" >> $GITHUB_OUTPUT; else echo "key=__skip__" >> $GITHUB_OUTPUT; fi
+      - name: Set Linear status to In Review
+        if: ${{ steps.extract.outputs.key != '__skip__' }}
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          ISSUE_KEY: ${{ steps.extract.outputs.key }}
+        run: |
+          [ -z "$LINEAR_API_KEY" ] && echo "Missing LINEAR_API_KEY" && exit 0
+          gql() { curl -sS -H "Content-Type: application/json" -H "Authorization: $LINEAR_API_KEY" -X POST https://api.linear.app/graphql -d "$1"; }
+          Q='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'$ISSUE_KEY'"}}'
+          J=$(gql "$Q"); IID=$(echo "$J"|jq -r '.data.issue.id // empty'); TID=$(echo "$J"|jq -r '.data.issue.team.id // empty')
+          [ -z "$IID" ] && echo "Issue not found" && exit 0
+          S=$(gql '{"query":"query($teamId:String!){ team(id:$teamId){ states{ nodes{ id name } } } }","variables":{"teamId":"'$TID'"}}')
+          SID=$(echo "$S"|jq -r '.data.team.states.nodes[]|select(.name=="In Review")|.id')
+          [ -z "$SID" ] && echo "In Review not found" && exit 0
+          M='{"query":"mutation($id:String!,$sid:String!){ issueUpdate(id:$id, input:{ stateId:$sid }){ success } }","variables":{"id":"'$IID'","sid":"'$SID'"}}'
+          gql "$M" | jq '.'
+
