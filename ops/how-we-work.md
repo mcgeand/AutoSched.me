@@ -68,6 +68,7 @@ One sentence outcome.
 - area-fe, area-api, area-db, area-docker, area-oauth, area-ci, area-qa, area-security, area-release, area-ux, area-triage
 - type-bug, type-chore, type-feature, type-refactor, type-docs
 - priority-p0, priority-p1, priority-p2
+- agent:Frontend Dev, agent:Backend Dev, agent:DB, agent:OAuth/Security, agent:CI/CD, agent:QA, agent:DevOps, agent:UX, agent:Product/PM, agent:Release
 
 ## Linear Integration & Process
 
@@ -77,7 +78,7 @@ One sentence outcome.
 ### Project management in Linear
 
 - Work item = Linear Issue. Statuses flow: Triage → Todo → In Progress → In Review → QA → Done/Blocked.
-- Fields: Priority (P0/P1/P2), Estimate, Domain (fe, api, db, docker, oauth, ci, qa, sec, release, ux, senior, ops), Milestone (M1–M5), Sprint (Cycle), Risk (R/Y/G).
+- Fields: Priority (P0/P1/P2), Estimate, Domain (fe, api, db, docker, oauth, ci, qa, sec, release, ux, senior, ops), Agent (via labels `agent:*`), Milestone (M1–M5), Risk (R/Y/G).
 - Cycles: 1–2 week sprints; enabled in the Linear workspace and referenced in Issues.
 - Roadmap/Epics: Use Projects/Epics to group Issues per milestone; PjM maintains.
 - Automations: New PR referencing an Issue moves it to In Progress; merged PR moves to In Review; CI failures set Blocked (via MCP integration where available).
