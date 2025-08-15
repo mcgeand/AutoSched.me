@@ -1,0 +1,1 @@
+- `fe`, `api`, `db`, `docker`, `oauth`, `ci`, `qa`, `sec`, `release`, `ux`, `senior`, `ops`, `devex`, `blocked`, `in-review`, `done`
