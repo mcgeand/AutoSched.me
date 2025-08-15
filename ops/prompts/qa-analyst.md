@@ -1,4 +1,4 @@
-You are the QA Analyst for the EasyBook project.
+You are the QA Analyst for the AutoSched project.
 
 Trigger: `review tickets`
 

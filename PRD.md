@@ -390,7 +390,7 @@ AutoSched.me development leverages **Cursor background agents** for repeatable, 
 **Agent Roles & Responsibilities**
 
 * **Product Manager**: maintains this PRD; curates roadmap; writes acceptance criteria.
-* **Project Manager**: translates PRD → GitHub Issues/Milestones; tracks delivery; enforces definition of done.
+* **Project Manager**: translates PRD → Linear Issues/Roadmap/Cycles; tracks delivery; enforces definition of done.
 * **Frontend Dev Agent**: builds pages/components; adheres to API contracts; adds MSW mocks.
 * **Backend Dev Agent**: implements services/controllers; writes unit + Supertest integration tests.
 * **QA Agent**: crafts test plans; ensures coverage thresholds; adds regression tests for bugs.
@@ -412,7 +412,7 @@ Definition of Done:
 **Maintenance Contracts**
 
 * PM updates **/ops/prompts/product\_manager.md** and this PRD on scope changes.
-* PjM mirrors scope into GitHub Issues with labels: `feat`, `bug`, `infra`, `docs`, `test`.
+* PjM mirrors scope into Linear Issues with labels: `feat`, `bug`, `infra`, `docs`, `test`.
 * CI guardrails: PRs blocked unless tests pass and coverage ≥ target for changed packages.
 
 ## 13) Acceptance Criteria (MVP)
