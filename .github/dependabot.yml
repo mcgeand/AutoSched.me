@@ -1,0 +1,77 @@
+version: 2
+updates:
+  # Root workspace (package.json at repo root, if present)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Dublin"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps"
+    groups:
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+
+  # API app (adjust path to your actual API app)
+  - package-ecosystem: "npm"
+    directory: "/apps/api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:10"
+      timezone: "Europe/Dublin"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(api)"
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # Web app (adjust path to your actual web app)
+  - package-ecosystem: "npm"
+    directory: "/apps/web"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:20"
+      timezone: "Europe/Dublin"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(web)"
+    groups:
+      minor-and-patch:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # GitHub Actions workflow updates
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:30"
+      timezone: "Europe/Dublin"
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "deps(actions)"
+
+  # (Optional) Lockfile maintenance
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      time: "05:30"
+      timezone: "Europe/Dublin"
+    allow:
+      - dependency-type: "all"
+    commit-message:
+      prefix: "lockfile"
+    versioning-strategy: "lockfile-only"

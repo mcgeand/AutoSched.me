@@ -3,7 +3,7 @@
 1. Hub triages tickets and sets Today’s Objectives.
 2. Trigger specialists with short commands (e.g., `/fe`, `/api`, `/db`).
 3. Specialists deliver PRs/tests/docs, then handoff back to Hub.
-4. Hub updates Decision Log and Handoff Queue; opens/links GitHub Issues.
+4. Hub updates Decision Log and Handoff Queue; opens/links Linear Issues.
 
 ## Ticket Template
 
@@ -69,10 +69,25 @@ One sentence outcome.
 - type-bug, type-chore, type-feature, type-refactor, type-docs
 - priority-p0, priority-p1, priority-p2
 
-## GitHub Issues Integration
+## Linear Integration & Process
 
-- Each ticket maps to a GitHub Issue. Link the Issue ID in `ops/hub.md` and PR titles.
-- Use labels above. Close Issues via PR with "Fixes #<id>".
+- Each ticket maps to a Linear Issue. Link the Issue ID in `ops/hub.md` and PR titles.
+- Use labels above. Reference Linear issues in PRs for traceability (e.g., "Linear: AS-123").
+
+### Project management in Linear
+
+- Work item = Linear Issue. Statuses flow: Triage → Todo → In Progress → In Review → QA → Done/Blocked.
+- Fields: Priority (P0/P1/P2), Estimate, Domain (fe, api, db, docker, oauth, ci, qa, sec, release, ux, senior, ops), Milestone (M1–M5), Sprint (Cycle), Risk (R/Y/G).
+- Cycles: 1–2 week sprints; enabled in the Linear workspace and referenced in Issues.
+- Roadmap/Epics: Use Projects/Epics to group Issues per milestone; PjM maintains.
+- Automations: New PR referencing an Issue moves it to In Progress; merged PR moves to In Review; CI failures set Blocked (via MCP integration where available).
+
+### Roles in Linear
+
+- Product Owner: backlog grooming, AC, acceptance.
+- Project Manager: roadmap → Issues/Epics, cycles, dependency/risk tracking, weekly report.
+- Scrum Master: capacity, sprint plan, standups, blocker routing.
+- Ops Updater: keeps `ops/hub.md` aligned with Linear via MCP.
 
 ## Prompt Contracts (Specialists)
 
