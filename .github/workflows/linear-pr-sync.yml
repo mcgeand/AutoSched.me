@@ -7,6 +7,7 @@ on:
 permissions:
   contents: read
   pull-requests: read
+  issues: read
 
 jobs:
   sync-linear-on-pr:
@@ -18,8 +19,7 @@ jobs:
         run: |
           TITLE="${{ github.event.pull_request.title }}"
           BODY="${{ github.event.pull_request.body }}"
-          TEXT="$TITLE
-$BODY"
+          TEXT="$TITLE"$'\n'"$BODY"
           # Match common keys like AS-123 or AUT-123
           if echo "$TEXT" | grep -Eo '(AS|AUT)-[0-9]+' | head -n1 > key.txt; then
             KEY=$(cat key.txt | tr -d '\n')
@@ -60,11 +60,7 @@ $BODY"
               -X POST https://api.linear.app/graphql -d "$1"
           }
           # 1) Find issue by key
-          QUERY=$(cat <<'Q'
-          {"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"__KEY__"}}
-Q
-          )
-          QUERY=${QUERY/__KEY__/$ISSUE_KEY}
+          QUERY='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'"$ISSUE_KEY"'"}}'
           ISSUE_JSON=$(gql "$QUERY")
           ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.id // empty')
           if [ -z "$ISSUE_ID" ]; then
@@ -73,18 +69,13 @@ Q
           fi
           TEAM_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.team.id')
           # 2) Resolve status ID by name within team
-          STATUSES=$(gql '{"query":"query($teamId: String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'$TEAM_ID'"}}')
+          STATUSES=$(gql '{"query":"query($teamId: String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'"$TEAM_ID"'"}}')
           STATUS_ID=$(echo "$STATUSES" | jq -r --arg NAME "$TARGET_STATUS" '.data.team.states.nodes[] | select(.name==$NAME) | .id')
           if [ -z "$STATUS_ID" ]; then
             echo "Could not resolve status '$TARGET_STATUS' for team; skipping"
             exit 0
           fi
           # 3) Set issue state
-          MUTATION=$(cat <<'M'
-          {"query":"mutation($id:String!,$stateId:String!){ issueUpdate(id:$id, input:{ stateId:$stateId }){ success } }","variables":{"id":"__ID__","stateId":"__STATE__"}}
-M
-          )
-          MUTATION=${MUTATION/__ID__/$ISSUE_ID}
-          MUTATION=${MUTATION/__STATE__/$STATUS_ID}
+          MUTATION='{"query":"mutation($id:String!,$stateId:String!){ issueUpdate(id:$id, input:{ stateId:$stateId }){ success } }","variables":{"id":"'"$ISSUE_ID"'","stateId":"'"$STATUS_ID"'"}}'
           gql "$MUTATION" | jq -r '.'
 
