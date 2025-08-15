@@ -1,1 +1,1 @@
-# easysched.me
+# AutoSched.me
