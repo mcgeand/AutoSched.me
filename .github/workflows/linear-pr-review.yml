@@ -19,12 +19,14 @@ jobs:
         id: extract
         run: |
           if [ "${{ github.event_name }}" = "pull_request" ]; then
-            TEXT="${{ github.event.pull_request.title }}
-${{ github.event.pull_request.body }}"
+            TITLE="${{ github.event.pull_request.title }}"
+            BODY="${{ github.event.pull_request.body }}"
+            TEXT="$TITLE"$'\n'"$BODY"
           else
             # pull_request_review
-            TEXT="${{ github.event.pull_request.title }}
-${{ github.event.pull_request.body }}"
+            TITLE="${{ github.event.pull_request.title }}"
+            BODY="${{ github.event.pull_request.body }}"
+            TEXT="$TITLE"$'\n'"$BODY"
           fi
           echo "$TEXT" | grep -Eo '(AS|AUT)-[0-9]+' | head -n1 > key.txt || true
           if [ -s key.txt ]; then echo "key=$(cat key.txt)" >> $GITHUB_OUTPUT; else echo "key=__skip__" >> $GITHUB_OUTPUT; fi
