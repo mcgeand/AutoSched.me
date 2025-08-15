@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "@modelcontextprotocol/server-filesystem": "^2025.7.29",
+    "@playwright/mcp": "^0.0.33",
+    "@upstash/context7-mcp": "^1.0.14",
+    "prisma": "^6.14.0"
+  }
+}
