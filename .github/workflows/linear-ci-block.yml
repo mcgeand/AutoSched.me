@@ -2,11 +2,12 @@ name: Linear CI Failure Blocker
 
 on:
   workflow_run:
-    workflows: ["Lint", "Typecheck", "Test", "Build"]
+    workflows: ["Lint", "Typecheck", "Test", "Build", "Linear PR Status Sync", "Linear PR Review Sync"]
     types: [completed]
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   block-on-failure:
