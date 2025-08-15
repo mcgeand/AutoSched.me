@@ -37,11 +37,7 @@ jobs:
         run: |
           if [ -z "$LINEAR_API_KEY" ]; then echo "LINEAR_API_KEY not set; skipping"; exit 0; fi
           gql() { curl -sS -H "Content-Type: application/json" -H "Authorization: $LINEAR_API_KEY" -X POST https://api.linear.app/graphql -d "$1"; }
-          QUERY=$(cat <<'Q'
-          {"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"__KEY__"}}
-Q
-          )
-          QUERY=${QUERY/__KEY__/$ISSUE_KEY}
+          QUERY='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'"$ISSUE_KEY"'"}}'
           ISSUE_JSON=$(gql "$QUERY")
           ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.id // empty')
           [ -z "$ISSUE_ID" ] && echo "Issue not found; skipping" && exit 0
@@ -49,12 +45,6 @@ Q
           STATUSES=$(gql '{"query":"query($teamId: String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'$TEAM_ID'"}}')
           STATUS_ID=$(echo "$STATUSES" | jq -r '.data.team.states.nodes[] | select(.name=="Blocked") | .id')
           [ -z "$STATUS_ID" ] && echo "Blocked not found; skipping" && exit 0
-          MUT=$(cat <<'M'
-          {"query":"mutation($id:String!,$stateId:String!,$comment:String!){ issueUpdate(id:$id, input:{ stateId:$stateId, description: null }){ success } commentCreate(input:{ issueId:$id, body:$comment }){ success } }","variables":{"id":"__ID__","stateId":"__STATE__","comment":"CI failed: __URL__"}}
-M
-          )
-          MUT=${MUT/__ID__/$ISSUE_ID}
-          MUT=${MUT/__STATE__/$STATUS_ID}
-          MUT=${MUT/__URL__/$RUN_URL}
+          MUT='{"query":"mutation($id:String!,$stateId:String!,$comment:String!){ issueUpdate(id:$id, input:{ stateId:$stateId, description: null }){ success } commentCreate(input:{ issueId:$id, body:$comment }){ success } }","variables":{"id":"'"$ISSUE_ID"'","stateId":"'"$STATUS_ID"'","comment":"CI failed: '"$RUN_URL"'"}}'
           gql "$MUT" | jq -r '.'
 
