@@ -14,3 +14,14 @@
 
 
 <!-- Linear: AUT-5 -->
+
+## Linear Shortcuts
+
+- Board by Status: https://linear.app/autoschedme/issue/AUT-15/create-shared-view-board-by-status
+- Table by Domain: https://linear.app/autoschedme/issue/AUT-16/create-shared-view-table-by-domain-area
+- Roadmap by Project: https://linear.app/autoschedme/issue/AUT-17/create-shared-view-roadmap-by-project-m1-m5
+- M1 – Platform Foundations: https://linear.app/autoschedme/project/m1-platform-foundations-39f770f3d4e2
+- M2 – Core Product Ready: https://linear.app/autoschedme/project/m2-core-product-ready-0500061f5a68
+- M3 – Production Launch (eu-north-1): https://linear.app/autoschedme/project/m3-production-launch-eu-north-1-16bd3f691868
+- M4 – Scale & Optimize: https://linear.app/autoschedme/project/m4-scale-and-optimize-f232307bd5e7
+- M5 – Compliance & Trust: https://linear.app/autoschedme/project/m5-compliance-and-trust-8f2cc61de25b
