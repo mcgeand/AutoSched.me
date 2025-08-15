@@ -11,3 +11,6 @@
 - Work is managed in Linear using Issues, Cycles (sprints), and Projects/Epics.
 - Use fields: Priority (P0/P1/P2), Domain (fe, api, db, docker, oauth, ci, qa, sec, release, ux, senior, ops), Milestone (M1–M5), Sprint (Cycle), Risk (R/Y/G).
 - Status flow: Triage → Todo → In Progress → In Review → QA → Done/Blocked.
+
+
+<!-- Linear: AUT-5 -->
