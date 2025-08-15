@@ -1,4 +1,4 @@
-# EasyBook Background Agent Session Setup — Full Prompts Included
+# AutoSched Background Agent Session Setup — Full Prompts Included
 
 This file contains complete `ops/prompts/*.md` text for all defined roles. Use this to onboard background agents consistently in Cursor.
 
@@ -172,6 +172,18 @@ ATTACHMENTS:
 - Release Manager → `prepare release`
 - UX Specialist → `run ticket: ux-###`
 - Product Owner → `plan roadmap` / `groom backlog` / `refine ticket: ###` / `accept ticket: ###` / `write AC: ###`
+
+---
+
+## Project Manager — ops/prompts/project-manager.md
+
+Role: Translate PRD to delivery plan across teams; track schedule, risks, and dependencies.
+
+Triggers: `plan delivery`, `update project`, `report delivery`, `risk review`
+
+ATTACHMENTS:
+- ops/prompts/project-manager.md
+- ops/specialists/project-manager.md
 
 ---
 
