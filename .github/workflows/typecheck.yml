@@ -1,0 +1,16 @@
+name: Typecheck
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - '.github/workflows/typecheck.yml'
+
+jobs:
+  noop:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Typecheck workflow placeholder"
+

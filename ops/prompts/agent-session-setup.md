@@ -40,106 +40,106 @@ ATTACHMENTS:
 
 ---
 
-## QA Analyst — ops/prompts/qa-analyst.md
+## QA Analyst — ops/prompts/qa.md
 
 Role: Verify acceptance criteria and regressions.
 
 Trigger: `review tickets`
 
 ATTACHMENTS:
-- ops/prompts/qa-analyst.md
+- ops/prompts/qa.md
 - ops/specialists/qa.md
 
 ---
 
-## CI Specialist — ops/prompts/ci-specialist.md
+## CI/CD Specialist — ops/prompts/ci-cd.md
 
 Role: Keep CI reliable and fast; no unfamiliar workflows.
 
-Trigger: `run ticket: ci-###`
+Trigger: `run ticket: ci-cd-###`
 
 ATTACHMENTS:
-- ops/prompts/ci-specialist.md
-- ops/specialists/ci.md
+- ops/prompts/ci-cd.md
+- ops/specialists/ci-cd.md
 
 ---
 
-## Frontend Specialist — ops/prompts/frontend-specialist.md
+## Frontend Developer — ops/prompts/frontend-dev.md
 
-Trigger: `run ticket: fe-###`
+Trigger: `run ticket: frontend-dev-###`
 
 ATTACHMENTS:
-- ops/prompts/frontend-specialist.md
-- ops/specialists/fe.md
+- ops/prompts/frontend-dev.md
+- ops/specialists/frontend-dev.md
 
 ---
 
-## API Specialist — ops/prompts/api-specialist.md
+## Backend Developer — ops/prompts/backend-dev.md
 
-Trigger: `run ticket: api-###`
+Trigger: `run ticket: backend-dev-###`
 
 ATTACHMENTS:
-- ops/prompts/api-specialist.md
-- ops/specialists/api.md
+- ops/prompts/backend-dev.md
+- ops/specialists/backend-dev.md
 
 ---
 
-## Database Specialist — ops/prompts/db-specialist.md
+## Database Specialist — ops/prompts/db.md
 
 Trigger: `run ticket: db-###`
 
 ATTACHMENTS:
-- ops/prompts/db-specialist.md
+- ops/prompts/db.md
 - ops/specialists/db.md
 
 ---
 
-## DevOps Specialist — ops/prompts/devops-specialist.md
+## DevOps Specialist — ops/prompts/devops.md
 
 Trigger: `run ticket: devops-###`
 
 ATTACHMENTS:
-- ops/prompts/devops-specialist.md
-- ops/specialists/docker.md
+- ops/prompts/devops.md
+- ops/specialists/devops.md
 
 ---
 
-## OAuth Specialist — ops/prompts/oauth-specialist.md
+## OAuth/Security Specialist — ops/prompts/oauth-security.md
 
-Trigger: `run ticket: oauth-###`
+Trigger: `run ticket: oauth-security-###`
 
 ATTACHMENTS:
-- ops/prompts/oauth-specialist.md
-- ops/specialists/oauth.md
+- ops/prompts/oauth-security.md
+- ops/specialists/oauth-security.md
 
 ---
 
-## Security Specialist — ops/prompts/security-specialist.md
+## Security Specialist — ops/prompts/security.md
 
-Trigger: `run ticket: sec-###`
+Trigger: `run ticket: security-###`
 
 ATTACHMENTS:
-- ops/prompts/security-specialist.md
+- ops/prompts/security.md
 - ops/specialists/security.md
 
 ---
 
-## Release Manager — ops/prompts/release-manager.md
+## Release Manager — ops/prompts/release.md
 
 Trigger: `prepare release`
 
 ATTACHMENTS:
-- ops/prompts/release-manager.md
+- ops/prompts/release.md
 - ops/specialists/release.md
 
 ---
 
-## UX Specialist — ops/prompts/ux-specialist.md
+## UX Specialist — ops/prompts/ux.md
 
 Trigger: `run ticket: ux-###`
 
 ATTACHMENTS:
-- ops/prompts/ux-specialist.md
+- ops/prompts/ux.md
 - ops/specialists/ux.md
 
 ---
@@ -161,14 +161,14 @@ ATTACHMENTS:
 - Ops Updater → `update tickets`
 - Scrum Master → `plan sprint` / `assign tickets` / `standup` / `triage backlog` / `report`
 - Senior Dev Triage → `triage tickets`
-- QA Analyst → `review tickets`
-- CI Specialist → `run ticket: ci-###`
-- FE Specialist → `run ticket: fe-###`
-- API Specialist → `run ticket: api-###`
-- DB Specialist → `run ticket: db-###`
+- QA Specialist → `review tickets`
+- CI/CD Specialist → `run ticket: ci-cd-###`
+- Frontend Developer → `run ticket: frontend-dev-###`
+- Backend Developer → `run ticket: backend-dev-###`
+- Database Specialist → `run ticket: db-###`
 - DevOps Specialist → `run ticket: devops-###`
-- OAuth Specialist → `run ticket: oauth-###`
-- Security Specialist → `run ticket: sec-###`
+- OAuth/Security Specialist → `run ticket: oauth-security-###`
+- Security Specialist → `run ticket: security-###`
 - Release Manager → `prepare release`
 - UX Specialist → `run ticket: ux-###`
 - Product Owner → `plan roadmap` / `groom backlog` / `refine ticket: ###` / `accept ticket: ###` / `write AC: ###`

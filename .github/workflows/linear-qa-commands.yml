@@ -1,0 +1,54 @@
+name: Linear QA Commands
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+  actions: read
+
+jobs:
+  qa-command:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse command
+        id: cmd
+        run: |
+          BODY="${{ github.event.comment.body }}"
+          if echo "$BODY" | grep -qi '^/qa pass'; then echo "cmd=pass" >> $GITHUB_OUTPUT; exit 0; fi
+          if echo "$BODY" | grep -qi '^/qa fail'; then echo "cmd=fail" >> $GITHUB_OUTPUT; exit 0; fi
+          echo "cmd=__skip__" >> $GITHUB_OUTPUT
+      - name: Resolve PR and Linear key
+        if: ${{ steps.cmd.outputs.cmd != '__skip__' }}
+        id: meta
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR_URL=${{ github.event.issue.pull_request.url }}
+          gh api "$PR_URL" --jq '.title + "\n" + .body' > pr.txt
+          KEY=$(cat pr.txt | grep -Eo '(AS|AUT)-[0-9]+' | head -n1)
+          if [ -z "$KEY" ]; then echo "key=__skip__" >> $GITHUB_OUTPUT; else echo "key=$KEY" >> $GITHUB_OUTPUT; fi
+      - name: Apply QA result in Linear
+        if: ${{ steps.meta.outputs.key != '__skip__' }}
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          ISSUE_KEY: ${{ steps.meta.outputs.key }}
+          CMD: ${{ steps.cmd.outputs.cmd }}
+          COMMENT_URL: ${{ github.event.comment.html_url }}
+        run: |
+          [ -z "$LINEAR_API_KEY" ] && echo "Missing LINEAR_API_KEY" && exit 0
+          gql() { curl -sS -H "Content-Type: application/json" -H "Authorization: $LINEAR_API_KEY" -X POST https://api.linear.app/graphql -d "$1"; }
+          Q='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'$ISSUE_KEY'"}}'
+          J=$(gql "$Q"); IID=$(echo "$J"|jq -r '.data.issue.id // empty'); TID=$(echo "$J"|jq -r '.data.issue.team.id // empty')
+          [ -z "$IID" ] && echo "Issue not found" && exit 0
+          S=$(gql '{"query":"query($teamId:String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'$TID'"}}')
+          if [ "$CMD" = "pass" ]; then TARGET="Done"; else TARGET="Todo"; fi
+          SID=$(echo "$S"|jq -r --arg N "$TARGET" '.data.team.states.nodes[]|select(.name==$N)|.id')
+          [ -z "$SID" ] && echo "Target status not found" && exit 0
+          M='{"query":"mutation($id:String!,$sid:String!,$c:String!){ issueUpdate(id:$id, input:{ stateId:$sid }){ success } commentCreate(input:{ issueId:$id, body:$c }){ success } }","variables":{"id":"'$IID'","sid":"'$SID'","c":"QA $CMD via $COMMENT_URL"}}'
+          gql "$M" | jq '.'
+

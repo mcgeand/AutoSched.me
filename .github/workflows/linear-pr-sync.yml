@@ -1,0 +1,81 @@
+name: Linear PR Status Sync
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  sync-linear-on-pr:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
+    steps:
+      - name: Extract Linear issue key from PR
+        id: extract
+        run: |
+          TITLE="${{ github.event.pull_request.title }}"
+          BODY="${{ github.event.pull_request.body }}"
+          TEXT="$TITLE"$'\n'"$BODY"
+          # Match common keys like AS-123 or AUT-123
+          if echo "$TEXT" | grep -Eo '(AS|AUT)-[0-9]+' | head -n1 > key.txt; then
+            KEY=$(cat key.txt | tr -d '\n')
+            echo "key=$KEY" >> $GITHUB_OUTPUT
+          else
+            echo "No Linear key found; skipping"
+          fi
+      - name: Determine desired status
+        id: status
+        run: |
+          if [ -z "${{ steps.extract.outputs.key }}" ]; then
+            echo "status=__skip__" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          if [ "${{ github.event.action }}" = "closed" ]; then
+            if [ "${{ github.event.pull_request.merged }}" = "true" ]; then
+              echo "status=QA" >> $GITHUB_OUTPUT
+            else
+              echo "status=Todo" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "status=In Progress" >> $GITHUB_OUTPUT
+          fi
+      - name: Update Linear status
+        if: ${{ steps.status.outputs.status != '__skip__' }}
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          ISSUE_KEY: ${{ steps.extract.outputs.key }}
+          TARGET_STATUS: ${{ steps.status.outputs.status }}
+        run: |
+          if [ -z "$LINEAR_API_KEY" ]; then
+            echo "LINEAR_API_KEY not set; skipping"
+            exit 0
+          fi
+          # GraphQL helper
+          gql() {
+            curl -sS -H "Content-Type: application/json" -H "Authorization: $LINEAR_API_KEY" \
+              -X POST https://api.linear.app/graphql -d "$1"
+          }
+          # 1) Find issue by key
+          QUERY='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'"$ISSUE_KEY"'"}}'
+          ISSUE_JSON=$(gql "$QUERY")
+          ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.id // empty')
+          if [ -z "$ISSUE_ID" ]; then
+            echo "Issue $ISSUE_KEY not found; skipping"
+            exit 0
+          fi
+          TEAM_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.team.id')
+          # 2) Resolve status ID by name within team
+          STATUSES=$(gql '{"query":"query($teamId: String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'"$TEAM_ID"'"}}')
+          STATUS_ID=$(echo "$STATUSES" | jq -r --arg NAME "$TARGET_STATUS" '.data.team.states.nodes[] | select(.name==$NAME) | .id')
+          if [ -z "$STATUS_ID" ]; then
+            echo "Could not resolve status '$TARGET_STATUS' for team; skipping"
+            exit 0
+          fi
+          # 3) Set issue state
+          MUTATION='{"query":"mutation($id:String!,$stateId:String!){ issueUpdate(id:$id, input:{ stateId:$stateId }){ success } }","variables":{"id":"'"$ISSUE_ID"'","stateId":"'"$STATUS_ID"'"}}'
+          gql "$MUTATION" | jq -r '.'
+

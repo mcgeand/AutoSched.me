@@ -1,0 +1,50 @@
+name: Linear CI Failure Blocker
+
+on:
+  workflow_run:
+    workflows: ["Lint", "Typecheck", "Test", "Build", "Linear PR Status Sync", "Linear PR Review Sync"]
+    types: [completed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  block-on-failure:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'failure' || github.event.workflow_run.conclusion == 'timed_out' }}
+    steps:
+      - name: Extract PR number
+        id: pr
+        run: |
+          PR=$(echo '${{ toJson(github.event.workflow_run.pull_requests) }}' | jq -r '.[0].number // empty')
+          if [ -z "$PR" ]; then echo "pr=__skip__" >> $GITHUB_OUTPUT; else echo "pr=$PR" >> $GITHUB_OUTPUT; fi
+      - name: Fetch PR details
+        if: ${{ steps.pr.outputs.pr != '__skip__' }}
+        id: prdata
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr view ${{ steps.pr.outputs.pr }} --json title,body | tee pr.json
+          KEY=$(jq -r '[.title,.body] | join("\n") | capture("(?<k>(AS|AUT)-[0-9]+)") | .k' pr.json 2>/dev/null || true)
+          if [ -z "$KEY" ]; then echo "key=__skip__" >> $GITHUB_OUTPUT; else echo "key=$KEY" >> $GITHUB_OUTPUT; fi
+      - name: Set Linear status to Blocked and add note
+        if: ${{ steps.prdata.outputs.key != '__skip__' }}
+        env:
+          LINEAR_API_KEY: ${{ secrets.LINEAR_API_KEY }}
+          ISSUE_KEY: ${{ steps.prdata.outputs.key }}
+          RUN_URL: ${{ github.event.workflow_run.html_url }}
+        run: |
+          if [ -z "$LINEAR_API_KEY" ]; then echo "LINEAR_API_KEY not set; skipping"; exit 0; fi
+          gql() { curl -sS -H "Content-Type: application/json" -H "Authorization: $LINEAR_API_KEY" -X POST https://api.linear.app/graphql -d "$1"; }
+          QUERY='{"query":"query($key:String!){ issue(key:$key){ id team{ id } } }","variables":{"key":"'"$ISSUE_KEY"'"}}'
+          ISSUE_JSON=$(gql "$QUERY")
+          ISSUE_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.id // empty')
+          [ -z "$ISSUE_ID" ] && echo "Issue not found; skipping" && exit 0
+          TEAM_ID=$(echo "$ISSUE_JSON" | jq -r '.data.issue.team.id')
+          STATUSES=$(gql '{"query":"query($teamId: String!){ team(id:$teamId){ states{ nodes{ id name type } } } }","variables":{"teamId":"'$TEAM_ID'"}}')
+          STATUS_ID=$(echo "$STATUSES" | jq -r '.data.team.states.nodes[] | select(.name=="Blocked") | .id')
+          [ -z "$STATUS_ID" ] && echo "Blocked not found; skipping" && exit 0
+          MUT='{"query":"mutation($id:String!,$stateId:String!,$comment:String!){ issueUpdate(id:$id, input:{ stateId:$stateId, description: null }){ success } commentCreate(input:{ issueId:$id, body:$comment }){ success } }","variables":{"id":"'"$ISSUE_ID"'","stateId":"'"$STATUS_ID"'","comment":"CI failed: '"$RUN_URL"'"}}'
+          gql "$MUT" | jq -r '.'
+

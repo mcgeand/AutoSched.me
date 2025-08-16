@@ -54,11 +54,11 @@
 - [2025-08-10-ci-009](./tasks/2025-08-10-ci-009.md) — Enforce OpenAPI/types drift in baseline `dev` workflow — status: todo — branch: `bg/ci-009` — owner: ci
 - [2025-08-10-ci-010](./tasks/2025-08-10-ci-010.md) — Add `.nvmrc` and align `engines` with Node 20 — status: todo — branch: `bg/ci-010` — owner: ci
 - [2025-08-10-ci-011](./tasks/2025-08-10-ci-011.md) — Reconcile Mock System Freeze Validation doc vs workflows — status: todo — branch: `bg/ci-011` — owner: ci
-- [2025-08-10-fe-019](./tasks/2025-08-10-fe-019.md) — Frontend setup validation and API client/codegen usage — status: todo — branch: `bg/fe-019` — owner: fe
+- [2025-08-10-fe-019](./tasks/2025-08-10-fe-019.md) — Frontend setup validation and API client/codegen usage — status: todo — branch: `bg/fe-019` — owner: frontend-dev
 - [2025-08-10-qa-020](./tasks/2025-08-10-qa-020.md) — Initial QA plan and test mapping — status: todo — branch: `bg/qa-020` — owner: qa
 - [2025-08-10-sec-017](./tasks/2025-08-10-sec-017.md) — CSP configuration validation (report-only) — status: todo — branch: `bg/sec-017` — owner: sec
 - [2025-08-10-oauth-018](./tasks/2025-08-10-oauth-018.md) — Google Calendar integration validation (mocks vs live) — status: todo — branch: `bg/oauth-018` — owner: oauth
-- [2025-08-10-api-022](./tasks/2025-08-10-api-022.md) — Backend runtime environment validation (zod) — status: todo — branch: `bg/api-022` — owner: api
+- [2025-08-10-api-022](./tasks/2025-08-10-api-022.md) — Backend runtime environment validation (zod) — status: todo — branch: `bg/api-022` — owner: backend-dev
 <!-- OPS:HANDOFF-END -->
 
 ---
