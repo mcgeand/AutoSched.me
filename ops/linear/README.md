@@ -27,6 +27,39 @@
 ## Status flow
 Triage → Todo → In Progress → In Review → QA → Done/Blocked
 
+### Workflow Statuses
+
+The AutoSched team uses the following standardized workflow statuses:
+
+#### **Backlog Statuses**
+- **Triage** - Initial state for new issues requiring prioritization and assignment
+
+#### **Unstarted Statuses**  
+- **Todo** - Ready to work, prioritized and assigned
+- **Blocked** - Cannot proceed due to dependencies or external blockers
+
+#### **Started Statuses**
+- **In Progress** - Actively being worked on (enforce WIP limits: 1 per agent)
+- **In Review** - Code/work completed, awaiting peer review
+- **QA** - In quality assurance testing phase
+
+#### **Completed Statuses**
+- **Done** - Work completed and accepted
+
+#### **Canceled Statuses**
+- **Canceled** - Work discontinued or no longer needed
+- **Duplicate** - Issue is duplicate of another issue
+
+### Status Guidelines
+
+- **Triage**: All new issues start here for Scrum Master prioritization
+- **Todo**: Issues ready to be pulled into "In Progress" by assigned agents
+- **In Progress**: Enforce WIP limits - maximum 1 issue per agent to maintain focus
+- **In Review**: Trigger for code review process, PR review, or stakeholder approval
+- **QA**: Issues requiring testing validation before completion
+- **Blocked**: Use when dependencies prevent progress - document blocker in comments
+- **Done**: Final state for successfully completed and accepted work
+
 ## Projects/Epics
 - Organize larger initiatives as Linear Projects/Epics per milestone.
 - Each Epic contains child issues spanning domains.
