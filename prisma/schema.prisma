@@ -1,6 +1,3 @@
-// This is the initial Prisma schema for AutoSched.me
-// See AUT-48 for context
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,22 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id    Int    @id @default(autoincrement())
-  email String @unique
-  name  String?
-  createdAt DateTime @default(now())
-  session Session?
-}
-
 model Session {
   id        Int      @id @default(autoincrement())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    Int      @unique
   token     String   @unique
   expiry    DateTime
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  @@index([userId])
+  updatedAt DateTime
+  User      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@index([expiry])
+  @@index([userId])
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  Session   Session?
 }

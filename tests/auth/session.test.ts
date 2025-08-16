@@ -10,7 +10,7 @@ const TEST_USER_PASSWORD = 'password123';
 describe('Session Management', () => {
   beforeAll(async () => {
     // Clean up any existing test user and session
-    await prisma.session.deleteMany({ where: { user: { email: TEST_USER_EMAIL } } });
+    await prisma.session.deleteMany({ where: { User: { email: TEST_USER_EMAIL } } });
     await prisma.user.deleteMany({ where: { email: TEST_USER_EMAIL } });
     // Create test user
     await prisma.user.create({ data: { email: TEST_USER_EMAIL, name: 'Test User' } });
@@ -18,7 +18,7 @@ describe('Session Management', () => {
 
   afterAll(async () => {
     // Clean up test user and session
-    await prisma.session.deleteMany({ where: { user: { email: TEST_USER_EMAIL } } });
+    await prisma.session.deleteMany({ where: { User: { email: TEST_USER_EMAIL } } });
     await prisma.user.deleteMany({ where: { email: TEST_USER_EMAIL } });
     await prisma.$disconnect();
   });
@@ -84,6 +84,7 @@ describe('Session Management', () => {
         userId: tempUser.id,
         token: 'expiredtoken',
         expiry: new Date(Date.now() - 1000 * 60),
+        updatedAt: new Date(),
       },
     });
     const res = await request(app)
