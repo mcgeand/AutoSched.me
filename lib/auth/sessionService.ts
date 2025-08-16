@@ -6,7 +6,7 @@ export async function createSession(userId: number) {
   const token = randomBytes(32).toString('hex');
   const expiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
   return prisma.session.create({
-    data: { userId, token, expiry }
+    data: { userId, token, expiry, updatedAt: new Date() }
   });
 }
 
@@ -25,7 +25,7 @@ export async function rotateSession(sessionId: number) {
   const newExpiry = new Date(Date.now() + 60 * 60 * 1000);
   return prisma.session.update({
     where: { id: sessionId },
-    data: { token: newToken, expiry: newExpiry }
+    data: { token: newToken, expiry: newExpiry, updatedAt: new Date() }
   });
 }
 
