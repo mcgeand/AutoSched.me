@@ -2,13 +2,25 @@
   "devDependencies": {
     "@modelcontextprotocol/server-filesystem": "^2025.7.29",
     "@playwright/mcp": "^0.0.33",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/jest": "^30.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/supertest": "^6.0.3",
     "@upstash/context7-mcp": "^1.0.14",
-    "prisma": "^6.14.0"
+    "jest": "^29.7.0",
+    "prisma": "^6.14.0",
+    "supertest": "^7.1.4",
+    "ts-jest": "^29.4.1"
   },
   "scripts": {
-    "dev": "echo 'TODO: Define dev script for app startup' && sleep 3600"
+    "dev": "echo 'TODO: Define dev script for app startup' && sleep 3600",
+    "test": "jest"
   },
   "dependencies": {
-    "@prisma/client": "^6.14.0"
+    "@prisma/client": "^6.14.0",
+    "axios": "^1.11.0",
+    "cookie-parser": "^1.4.7",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2"
   }
 }
