@@ -103,3 +103,12 @@ One-sentence outcome.
   2. Use the UUID from the list above for the correct milestone.
   3. When associating issues, use the milestone’s UUID field.
   4. For links and more details, see `ops/linear/README.md` and `ops/hub.md`.
+
+## Updating Milestones via Linear GraphQL API
+
+- All milestone and issue updates should be performed using the official Linear GraphQL API for accuracy and auditability.
+- Use the API key from `.env.local` (see 'Linear API Key Setup' above) for authenticated GraphQL calls.
+- To associate an issue with a milestone, use the GraphQL mutation to update the issue’s `milestoneId` field with the correct UUID.
+- Always resolve milestone IDs from the UUIDs listed above or from the Linear web UI (never by name alone).
+- For milestone creation, updates, or assignment, refer to the [Linear GraphQL API documentation](https://developers.linear.app/docs/graphql/overview) for mutation examples and required fields.
+- This ensures all changes are reflected in Linear as the source of truth and are compatible with automations and reporting.
