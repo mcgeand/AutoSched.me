@@ -112,3 +112,41 @@ One-sentence outcome.
 - Always resolve milestone IDs from the UUIDs listed above or from the Linear web UI (never by name alone).
 - For milestone creation, updates, or assignment, refer to the [Linear GraphQL API documentation](https://developers.linear.app/docs/graphql/overview) for mutation examples and required fields.
 - This ensures all changes are reflected in Linear as the source of truth and are compatible with automations and reporting.
+
+## Milestone Assignment Automation
+
+The script `assign-missing-milestones.sh` intelligently automates the process of assigning milestones to issues in Linear that do not have one. It analyzes issue content to determine the most appropriate milestone assignment. It is located in this directory and can be run as follows:
+
+```
+chmod +x assign-missing-milestones.sh
+./assign-missing-milestones.sh
+```
+
+### Intelligent Assignment Logic
+
+The script analyzes each issue's title, description, and labels to determine the most appropriate milestone from the M1 Platform Foundations milestones:
+
+- **Core Backend APIs** (`ad332a2f-f981-4812-8104-86216948418c`): Issues containing keywords like backend, api, endpoint, prisma, database, session, auth, calendar, oauth, schema, migration
+- **Frontend Integration** (`9587db4f-8120-493a-8877-fe207019b624`): Issues containing keywords like frontend, fe, ui, ux, react, component, interface, type alignment, client codegen
+- **CI/CD & QA Baseline** (`70acfbbf-1fcf-4a85-a8a7-be660db22527`): Issues containing keywords like ci, cd, workflow, test, qa, integration test, pipeline, build, node version, dependency, baseline, drift
+- **Infra Setup** (`a82d0c7b-083b-4ab5-9259-d38a56f6812e`): Issues containing keywords like docker, infra, infrastructure, aws, deployment, environment, env, secrets, production
+- **Ops** (`fb15740e-d290-47af-807a-c25a5dc93441`): Issues containing keywords like ops, operations, documentation, readme, hub.md, linear, milestone, triage, handoff
+
+### Process
+- The script fetches all issues (up to 100 at a time) with detailed information including description and labels.
+- For issues without milestones, it analyzes the content using pattern matching to determine the best fit.
+- Issues already assigned to milestones are skipped and reported.
+- The script provides detailed output showing the reasoning and outcome for each assignment.
+- The script requires `jq` to be installed for JSON parsing.
+- The Linear API key must be present in `.env.local` as `LINEAR_API_KEY`.
+
+### Limitations
+- Only works for the first 100 issues (can be extended for pagination).
+- Currently focused on M1 Platform Foundations milestones (can be extended for M2-M5).
+- Keyword matching is case-insensitive but relies on English text patterns.
+- Will not update special Linear onboarding/demo issues (API limitation).
+
+### Extending for Future Milestones
+- Each milestone phase (M2-M5) may require different keyword patterns.
+- The script can be extended to accept a milestone phase argument and use appropriate pattern sets.
+- Future versions could include machine learning-based classification for more sophisticated content analysis.
